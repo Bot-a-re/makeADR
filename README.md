@@ -41,7 +41,7 @@ ZIP 파일로부터 소스코드를 분석하여 Architecture Decision Record (A
 6. **아키텍처 위험 요소**
 
 ## 요구사항
-
+- Windows 10/11
 - JDK 25 (c:\jdk-25.0.2)
 
 ## 사용법
@@ -106,4 +106,5 @@ compile.bat
 ## 라이선스
 
 MIT License
+
 
