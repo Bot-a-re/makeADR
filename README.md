@@ -5,7 +5,7 @@ ZIP 파일로부터 소스코드를 분석하여 Architecture Decision Record (A
 ## 기능
 
 - **다중 언어 지원**: Java, C#, JavaScript, TypeScript, C, C++, Ruby, **Rust, Kotlin** 프로젝트 분석
-- **ADR-E 프레임워크**: Explainable Architectural Decision Record 지원
+- **Explainabile ADR 프레임워크**: Explainable Architectural Decision Record 지원
   - 🎯 명시적 의사결정 문장
   - 🔄 자동 대안 분석 (선택/거부 이유)
   - 📝 5W1H 구조화된 설명
@@ -106,3 +106,4 @@ compile.bat
 ## 라이선스
 
 MIT License
+
