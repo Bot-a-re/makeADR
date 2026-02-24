@@ -7,12 +7,12 @@ ADR Generator는 ZIP 파일로 압축된 Java 소스코드를 분석하여 Archi
 ## 주요 기능
 
 ### 1. 소스코드 분석
-- **패키지 구조 분석**: Java 패키지 구조 및 모듈 구성 파악
-- **의존성 분석**: import 문을 통한 모듈 간 의존 관계 추적
-- **프레임워크 감지**: Spring, JPA, Hibernate 등 사용된 프레임워크 자동 감지
-- **디자인 패턴 감지**: Singleton, Factory, Repository 등 적용된 디자인 패턴 식별
-- **데이터베이스 스키마 분석**: JPA Entity 및 SQL DDL 분석
-- **API 엔드포인트 분석**: Spring MVC 어노테이션 기반 REST API 추출
+- **다중 언어 및 고성능 파싱**: Java, C#, JS/TS, C/C++, Ruust, Kotlin 등 지원. 특히 Java는 **JavaParser**를 통합하여 AST 기반의 정밀 분석 수행
+- **패키지 구조 분석**: 패키지 구조 및 모듈 구성 파악
+- **의존성 분석**: import 문 및 의존성 정의 파일을 통한 관계 추적
+- **프레임워크 감지**: 주요 언어별 프레임워크 자동 감지
+- **디자인 패턴 감지**: AST 분석(Java) 및 패턴 매칭을 통한 디자인 패턴 식별
+- **데이터베이스/API 분석**: 스키마 및 엔드포인트 자동 추출
 
 ### 2. ADR 문서 생성
 자동 생성되는 ADR 문서에는 다음 내용이 포함됩니다:
@@ -57,8 +57,11 @@ compile.bat
 
 ### 실행
 ```bash
-run.bat <zip-file> [output-directory]
+run.bat <input-path> [output-directory] [--serve] [--debug]
 ```
+
+- `<input-path>`: 프로젝트 ZIP 파일 또는 프로젝트 루트 디렉토리 경로
+- `--serve`: 생성 후 로컬 미리보기 웹 서버 시작 (http://localhost:8080)
 
 ### 예제
 ```bash
@@ -69,16 +72,19 @@ run.bat project-source.zip
 run.bat project-source.zip ./my-output
 ```
 
-## ZIP 파일 준비
+## 분석 대상 준비
 
-### 방법 1: PowerShell 사용
-```powershell
-Compress-Archive -Path "프로젝트폴더\*" -DestinationPath "project-source.zip"
+### 방법 1: 디렉토리 직접 분석 (권장)
+별도의 압축 과정 없이 프로젝트 디렉토리를 바로 분석할 수 있습니다.
+```bash
+run.bat C:\Projects\MyProject
 ```
 
-### 방법 2: 탐색기 사용
-1. 프로젝트 폴더를 마우스 우클릭
-2. "압축" → "ZIP 파일로 압축" 선택
+### 방법 2: ZIP 파일 사용
+프로젝트 폴더를 ZIP으로 압축하여 입력으로 전달할 수 있습니다.
+```powershell
+Compress-Archive -Path "MyProject\*" -DestinationPath "project-source.zip"
+```
 
 ## 출력 결과
 
@@ -95,19 +101,14 @@ output/
 - GitHub/GitLab (Mermaid 차트 자동 렌더링)
 - 기타 Markdown 뷰어
 
-## Mermaid 차트 렌더링
+### 로컬 미리보기 서버 (`--serve`)
+`--serve` 옵션을 사용하여 실행하면 로컬 웹 서버가 시작됩니다.
+1. `run.bat my-project --serve` 실행
+2. 브라우저에서 `http://localhost:8080` 접속
+3. 생성된 ADR 목록 확인 및 실시간 Mermaid 렌더링 확인
 
-생성된 ADR 문서에는 Mermaid 형식의 다이어그램이 포함되어 있습니다.
-
-### GitHub/GitLab
-- 자동으로 렌더링됩니다.
-
-### VS Code
-1. "Markdown Preview Enhanced" 확장 설치
-2. Ctrl+Shift+V로 미리보기 열기
-
-### 온라인 뷰어
-- https://mermaid.live/ 에서 코드 복사/붙여넣기
+### GitHub 호스팅
+- GitHub 리포지토리에 업로드하면 자동으로 렌더링됩니다.
 
 ## 분석 범위
 
@@ -115,12 +116,16 @@ ADR Generator는 다음 항목을 분석합니다:
 
 | 분석 항목 | 설명 |
 |----------|------|
-| 패키지 구조 | package 선언 분석 |
-| 모듈 의존성 | import 문 분석 |
-| 프레임워크 | Spring, JPA, Hibernate, JUnit 등 |
-| 디자인 패턴 | Singleton, Factory, Builder, Observer, Strategy, Repository, Service, DTO 등 |
-| 데이터베이스 | @Entity, @Table, CREATE TABLE 등 |
-| API 엔드포인트 | @GetMapping, @PostMapping 등 Spring MVC 어노테이션 |
+| 패키지 구조 | package / namespace 선언 분석 |
+| 모듈 의존성 | import / using / require 분석 |
+| 프레임워크 | Spring, Express, ASP.NET, Rails 등 |
+| 디자인 패턴 | JavaParser 기반 AST 분석 및 다국어 패턴 매칭 |
+| 데이터베이스 | ORM Entity 및 SQL 문 분석 |
+| API 엔드포인트 | Web 프레임워크 어노테이션 및 라우팅 분석 |
+
+## CI/CD 통합
+
+`.github/workflows/adr-generation.yml` 템플릿을 참고하여 GitHub Actions에 통합할 수 있습니다. PR이 생성될 때마다 아키텍처 변경 사항을 자동으로 문서화할 수 있습니다.
 
 ## 제한사항
 

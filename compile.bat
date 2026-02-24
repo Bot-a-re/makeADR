@@ -20,7 +20,7 @@ mkdir bin
 echo.
 echo [2/2] 소스 코드 컴파일...
 dir /s /b src\*.java > sources.txt
-javac -d bin -encoding UTF-8 @sources.txt
+javac -d bin -cp "lib\*" -encoding UTF-8 @sources.txt
 
 if %ERRORLEVEL% EQU 0 (
     echo.

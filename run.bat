@@ -13,4 +13,4 @@ if "%1"=="" (
     exit /b 1
 )
 
-java -cp bin com.adr.Main %*
+java -cp "bin;lib\*" com.adr.Main %*

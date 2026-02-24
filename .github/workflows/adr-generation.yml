@@ -1,0 +1,39 @@
+name: Auto ADR Generation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  generate-adr:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v3
+      with:
+        java-version: '25'
+        distribution: 'oracle'
+
+    - name: Build ADR Generator
+      run: |
+        ./compile.bat
+
+    - name: Run ADR Generator
+      run: |
+        # Analyze current directory and output to ./docs/adr
+        mkdir -p docs/adr
+        ./run.bat . ./docs/adr
+
+    - name: Commit ADR
+      if: github.event_name == 'push'
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add docs/adr/*.md
+        git commit -m "docs: auto-generate ADR [skip ci]" || echo "No changes to commit"
+        git push

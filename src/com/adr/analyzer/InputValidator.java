@@ -70,6 +70,26 @@ public class InputValidator {
     // ── 공개 검증 메서드 ──────────────────────────────────────────────────────
 
     /**
+     * 입력 경로 검증 (파일 또는 디렉토리)
+     */
+    public static void validateInputPath(Path inputPath) {
+        if (inputPath == null) {
+            throw new SecurityException("입력 경로가 null입니다.");
+        }
+
+        File file = inputPath.toFile();
+        if (!file.exists()) {
+            throw new SecurityException("입력 경로가 존재하지 않습니다: " + inputPath);
+        }
+
+        if (file.isDirectory()) {
+            validateDirectoryInput(inputPath);
+        } else {
+            validateZipInput(inputPath);
+        }
+    }
+
+    /**
      * ZIP 입력 파일 검증
      * @throws SecurityException 검증 실패 시
      */
@@ -113,6 +133,25 @@ public class InputValidator {
             zipPath.toRealPath(); // 심볼릭 링크 탐지 및 경로 유효성 확인
         } catch (IOException e) {
             throw new SecurityException("입력 파일 경로 확인 실패: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 디렉토리 입력 검증
+     */
+    public static void validateDirectoryInput(Path dirPath) {
+        File dir = dirPath.toFile();
+        if (!dir.exists()) {
+            throw new SecurityException("디렉토리가 존재하지 않습니다: " + dirPath);
+        }
+        if (!dir.isDirectory()) {
+            throw new SecurityException("입력 경로가 디렉토리가 아닙니다: " + dirPath);
+        }
+
+        try {
+            dirPath.toRealPath();
+        } catch (IOException e) {
+            throw new SecurityException("입력 디렉토리 경로 확인 실패: " + e.getMessage());
         }
     }
 
